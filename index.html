@@ -1,0 +1,1604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sharief's Productivity Pack v2.0</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 1.5em;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 0.9em;
+        }
+
+        .print-menu {
+            background: #f8f9fa;
+            padding: 15px;
+            border-bottom: 2px solid #e0e0e0;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .print-bundle-btn {
+            background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 0.85em;
+            cursor: pointer;
+            transition: transform 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+        }
+
+        .print-bundle-btn:active {
+            transform: scale(0.95);
+        }
+
+        .eco-toggle {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85em;
+        }
+
+        .eco-toggle input {
+            width: 40px;
+            height: 22px;
+            cursor: pointer;
+        }
+
+        .tabs {
+            display: flex;
+            overflow-x: auto;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e0e0e0;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+
+        .tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab {
+            padding: 15px 20px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+            font-weight: 500;
+            font-size: 0.95em;
+            min-width: fit-content;
+        }
+
+        .tab:active {
+            background: #e9ecef;
+        }
+
+        .tab.active {
+            background: white;
+            border-bottom: 3px solid #667eea;
+            color: #667eea;
+        }
+
+        .content {
+            padding: 20px;
+            min-height: 400px;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .print-button {
+            background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 0.95em;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: transform 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .print-button:active {
+            transform: scale(0.95);
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px;
+            margin-top: 15px;
+        }
+
+        .day-header {
+            text-align: center;
+            font-weight: bold;
+            padding: 10px 5px;
+            background: #000;
+            color: white;
+            border-radius: 6px;
+            font-size: 0.8em;
+        }
+
+        body.eco-mode .day-header {
+            background: white;
+            color: black;
+            border: 1px solid #000;
+        }
+
+        .day-cell {
+            aspect-ratio: 1;
+            border: 1.5px solid #000;
+            border-radius: 6px;
+            padding: 4px;
+            position: relative;
+            min-height: 50px;
+        }
+
+        body.eco-mode .day-cell {
+            border: 1px solid #666;
+        }
+
+        .day-cell input {
+            width: 100%;
+            height: 100%;
+            border: none;
+            outline: none;
+            font-size: 0.75em;
+            background: transparent;
+            text-align: center;
+        }
+
+        .week-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .day-box {
+            border: 1.5px solid #000;
+            border-radius: 8px;
+            padding: 15px;
+            background: white;
+        }
+
+        body.eco-mode .day-box {
+            border: 1px solid #666;
+        }
+
+        .day-box h3 {
+            margin-bottom: 10px;
+            color: #000;
+            font-size: 1.1em;
+            border-bottom: 2px solid #000;
+            padding-bottom: 6px;
+        }
+
+        textarea {
+            width: 100%;
+            border: 1px solid #000;
+            border-radius: 6px;
+            padding: 12px;
+            resize: vertical;
+            font-family: inherit;
+            font-size: 1em;
+            background: white;
+            line-height: 1.6;
+            min-height: 80px;
+        }
+
+        body.eco-mode textarea {
+            border: 1px solid #666;
+        }
+
+        input[type="text"], input[type="number"], input[type="date"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #000;
+            border-radius: 6px;
+            font-size: 1em;
+            margin-bottom: 12px;
+            background: white;
+        }
+
+        body.eco-mode input[type="text"], 
+        body.eco-mode input[type="number"], 
+        body.eco-mode input[type="date"] {
+            border: 1px solid #666;
+        }
+
+        .habit-tracker {
+            margin-top: 20px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .habit-week-selector {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .week-btn {
+            padding: 10px 15px;
+            border: 2px solid #000;
+            border-radius: 8px;
+            background: white;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .week-btn.active {
+            background: #000;
+            color: white;
+        }
+
+        .week-btn:active {
+            transform: scale(0.95);
+        }
+
+        .habit-row {
+            display: grid;
+            grid-template-columns: 1fr repeat(7, 40px);
+            gap: 6px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+
+        .habit-name {
+            font-weight: 500;
+            padding: 10px;
+            background: #f8f9fa;
+            border: 1px solid #000;
+            border-radius: 6px;
+            font-size: 0.9em;
+        }
+
+        body.eco-mode .habit-name {
+            background: white;
+            border: 1px solid #666;
+        }
+
+        .habit-checkbox {
+            width: 35px;
+            height: 35px;
+            cursor: pointer;
+            accent-color: #000;
+        }
+
+        .habit-progress {
+            grid-column: span 7;
+            text-align: right;
+            font-size: 0.85em;
+            font-weight: bold;
+            color: #00b894;
+            padding: 5px 10px;
+        }
+
+        .priority-box {
+            background: #f8f9fa;
+            padding: 20px;
+            border: 2px solid #000;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        body.eco-mode .priority-box {
+            background: white;
+            border: 1px solid #666;
+        }
+
+        .priority-box h3 {
+            margin-bottom: 15px;
+            color: #000;
+            font-size: 1.1em;
+        }
+
+        .practice-menu {
+            background: #f8f9fa;
+            border: 2px solid #000;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        body.eco-mode .practice-menu {
+            background: white;
+            border: 1px solid #666;
+        }
+
+        .practice-menu h3 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.2em;
+        }
+
+        .practice-category {
+            margin-bottom: 20px;
+        }
+
+        .practice-category h4 {
+            font-size: 1.05em;
+            margin-bottom: 12px;
+            color: #000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .practice-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+        }
+
+        .practice-item input[type="checkbox"] {
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .practice-item span {
+            flex: 1;
+            font-size: 0.95em;
+        }
+
+        .practice-item input[type="text"] {
+            flex: 1;
+            margin-bottom: 0;
+            padding: 10px;
+            font-size: 0.95em;
+        }
+
+        .water-tracker {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .water-glass {
+            aspect-ratio: 3/4;
+            border: 2px solid #000;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            min-height: 60px;
+        }
+
+        body.eco-mode .water-glass {
+            border: 1px solid #666;
+        }
+
+        .water-glass.filled {
+            background: #000;
+        }
+
+        body.eco-mode .water-glass.filled {
+            background: #d3d3d3;
+        }
+
+        .water-glass:active {
+            transform: scale(0.95);
+        }
+
+        .section-title {
+            font-size: 1.4em;
+            margin-bottom: 15px;
+            color: #000;
+            border-bottom: 3px solid #000;
+            padding-bottom: 10px;
+            font-weight: bold;
+        }
+
+        body.eco-mode .section-title {
+            border-bottom: 2px solid #666;
+        }
+
+        .budget-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            overflow-x: auto;
+            display: block;
+        }
+
+        .budget-table table {
+            width: 100%;
+        }
+
+        .budget-table th, .budget-table td {
+            padding: 12px 8px;
+            text-align: left;
+            border: 1px solid #000;
+        }
+
+        body.eco-mode .budget-table th, 
+        body.eco-mode .budget-table td {
+            border: 1px solid #666;
+        }
+
+        .budget-table th {
+            background: #f1f3f5;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        body.eco-mode .budget-table th {
+            background: white;
+        }
+
+        .budget-total {
+            font-weight: bold;
+            background: #f8f9fa;
+        }
+
+        body.eco-mode .budget-total {
+            background: white;
+        }
+
+        .auto-calc {
+            font-weight: bold;
+            color: #00b894;
+            font-size: 1.1em;
+        }
+
+        .savings-progress {
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .quran-section {
+            border: 2px solid #000;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            background: white;
+        }
+
+        body.eco-mode .quran-section {
+            border: 1px solid #666;
+        }
+
+        .reflection-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border: 1px solid #000;
+        }
+
+        body.eco-mode .reflection-box {
+            background: white;
+            border: 1px solid #666;
+        }
+
+        .reflection-box h4 {
+            margin-bottom: 10px;
+            font-size: 1em;
+        }
+
+        .meal-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .meal-box {
+            border: 1.5px solid #000;
+            border-radius: 8px;
+            padding: 15px;
+            background: white;
+        }
+
+        body.eco-mode .meal-box {
+            border: 1px solid #666;
+        }
+
+        .meal-box h4 {
+            color: #000;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #000;
+            padding-bottom: 6px;
+            font-size: 1.1em;
+        }
+
+        .header-print {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #000;
+        }
+
+        .header-print h2 {
+            font-size: 1.6em;
+            margin-bottom: 5px;
+        }
+
+        .date-field {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 15px;
+            padding: 15px;
+            border: 1.5px solid #000;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+
+        body.eco-mode .date-field {
+            background: white;
+            border: 1px solid #666;
+        }
+
+        .date-field label {
+            font-weight: bold;
+            font-size: 0.95em;
+        }
+
+        .date-field input {
+            margin-bottom: 0;
+        }
+
+        .study-card {
+            border: 1.5px solid #000;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            background: white;
+        }
+
+        body.eco-mode .study-card {
+            border: 1px solid #666;
+        }
+
+        .study-card label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            margin-top: 12px;
+        }
+
+        .study-card label:first-child {
+            margin-top: 0;
+        }
+
+        .save-indicator {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            background: #00b894;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 0.9em;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .save-indicator.show {
+            opacity: 1;
+        }
+
+        /* Desktop styles */
+        @media (min-width: 768px) {
+            body {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .header p {
+                font-size: 1.1em;
+            }
+
+            .content {
+                padding: 30px;
+            }
+
+            .week-grid {
+                grid-template-columns: repeat(7, 1fr);
+                gap: 10px;
+            }
+
+            .meal-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 12px;
+            }
+
+            .water-tracker {
+                grid-template-columns: repeat(8, 1fr);
+                gap: 8px;
+            }
+
+            .habit-row {
+                grid-template-columns: 150px repeat(7, 30px);
+            }
+
+            .date-field {
+                flex-direction: row;
+                align-items: center;
+            }
+
+            .date-field label {
+                min-width: 120px;
+            }
+
+            .print-button {
+                width: auto;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .container {
+                box-shadow: none;
+                border-radius: 0;
+                max-width: 100%;
+            }
+
+            .header, .tabs, .print-button, .print-menu, .eco-toggle, .week-btn {
+                display: none !important;
+            }
+
+            .content {
+                padding: 15mm;
+            }
+
+            .page {
+                display: none !important;
+                page-break-after: always;
+            }
+
+            .page.active {
+                display: block !important;
+            }
+
+            textarea {
+                min-height: 60px;
+            }
+
+            .save-indicator {
+                display: none !important;
+            }
+
+            .week-grid {
+                grid-template-columns: repeat(7, 1fr);
+            }
+
+            .meal-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @page {
+            size: A4;
+            margin: 15mm;
+        }
+
+        /* Scrollbar styling for desktop */
+        @media (min-width: 768px) {
+            ::-webkit-scrollbar {
+                width: 8px;
+                height: 8px;
+            }
+
+            ::-webkit-scrollbar-track {
+                background: #f1f1f1;
+            }
+
+            ::-webkit-scrollbar-thumb {
+                background: #888;
+                border-radius: 4px;
+            }
+
+            ::-webkit-scrollbar-thumb:hover {
+                background: #555;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="save-indicator" id="saveIndicator">✓ Auto-saved</div>
+
+    <div class="container">
+        <div class="header">
+            <h1>📋 Sharief's Productivity Pack v2.0</h1>
+            <p>Mobile-Optimized • Auto-Saving</p>
+        </div>
+
+        <div class="print-menu">
+            <button class="print-bundle-btn" onclick="printBundle('monthly')">📅 Monthly</button>
+            <button class="print-bundle-btn" onclick="printBundle('weekly')">📆 Weekly</button>
+            <button class="print-bundle-btn" onclick="printBundle('daily')">⏰ Daily</button>
+            <button class="print-bundle-btn" onclick="printBundle('all')">📖 All</button>
+            
+            <div class="eco-toggle">
+                <label for="ecoMode">♻️</label>
+                <input type="checkbox" id="ecoMode" onchange="toggleEcoMode()">
+            </div>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" onclick="showPage('monthly')">🗓️ Monthly</div>
+            <div class="tab" onclick="showPage('weekly')">📆 Weekly</div>
+            <div class="tab" onclick="showPage('daily')">⏰ Daily</div>
+            <div class="tab" onclick="showPage('habits')">💪 Habits</div>
+            <div class="tab" onclick="showPage('study')">🧠 Study</div>
+            <div class="tab" onclick="showPage('budget')">💰 Budget</div>
+            <div class="tab" onclick="showPage('quran')">📖 Qur'an</div>
+            <div class="tab" onclick="showPage('life')">🏡 Life</div>
+            <div class="tab" onclick="showPage('growth')">🌱 Growth</div>
+        </div>
+
+        <div class="content">
+            <!-- Monthly Calendar -->
+            <div id="monthly" class="page active" data-bundle="monthly">
+                <button class="print-button" onclick="window.print()">🖨️ Print This Page</button>
+                
+                <div class="header-print">
+                    <h2>🗓️ Monthly Calendar</h2>
+                </div>
+
+                <div class="date-field">
+                    <label>Month & Year:</label>
+                    <input type="text" class="auto-save" data-key="monthly-name" placeholder="e.g., January 2025">
+                </div>
+                
+                <div class="calendar-grid">
+                    <div class="day-header">Mon</div>
+                    <div class="day-header">Tue</div>
+                    <div class="day-header">Wed</div>
+                    <div class="day-header">Thu</div>
+                    <div class="day-header">Fri</div>
+                    <div class="day-header">Sat</div>
+                    <div class="day-header">Sun</div>
+                </div>
+                <div class="calendar-grid" id="calendarDays"></div>
+                
+                <div style="margin-top: 20px;">
+                    <strong>Monthly Notes:</strong>
+                    <textarea rows="4" class="auto-save" data-key="monthly-notes" placeholder="Goals, events, important dates..."></textarea>
+                </div>
+            </div>
+
+            <!-- Weekly Planner -->
+            <div id="weekly" class="page" data-bundle="weekly">
+                <button class="print-button" onclick="window.print()">🖨️ Print This Page</button>
+                
+                <div class="header-print">
+                    <h2>📆 Weekly Planner</h2>
+                </div>
+
+                <div class="date-field">
+                    <label>Week of:</label>
+                    <input type="text" class="auto-save" data-key="week-date" placeholder="e.g., Jan 1-7, 2025">
+                </div>
+                
+                <div class="priority-box">
+                    <h3>⭐ Top 3 Priorities This Week</h3>
+                    <input type="text" class="auto-save" data-key="week-priority1" placeholder="1. Most important goal">
+                    <input type="text" class="auto-save" data-key="week-priority2" placeholder="2. Second priority">
+                    <input type="text" class="auto-save" data-key="week-priority3" placeholder="3. Third priority">
+                </div>
+
+                <div class="week-grid">
+                    <div class="day-box">
+                        <h3>Monday</h3>
+                        <textarea rows="4" class="auto-save" data-key="week-mon" placeholder="Tasks & notes..."></textarea>
+                    </div>
+                    <div class="day-box">
+                        <h3>Tuesday</h3>
+                        <textarea rows="4" class="auto-save" data-key="week-tue" placeholder="Tasks & notes..."></textarea>
+                    </div>
+                    <div class="day-box">
+                        <h3>Wednesday</h3>
+                        <textarea rows="4" class="auto-save" data-key="week-wed" placeholder="Tasks & notes..."></textarea>
+                    </div>
+                    <div class="day-box">
+                        <h3>Thursday</h3>
+                        <textarea rows="4" class="auto-save" data-key="week-thu" placeholder="Tasks & notes..."></textarea>
+                    </div>
+                    <div class="day-box">
+                        <h3>Friday</h3>
+                        <textarea rows="4" class="auto-save" data-key="week-fri" placeholder="Tasks & notes..."></textarea>
+                    </div>
+                    <div class="day-box">
+                        <h3>Saturday</h3>
+                        <textarea rows="4" class="auto-save" data-key="week-sat" placeholder="Tasks & notes..."></textarea>
+                    </div>
+                    <div class="day-box">
+                        <h3>Sunday</h3>
+                        <textarea rows="4" class="auto-save" data-key="week-sun" placeholder="Tasks & notes..."></textarea>
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <strong>Weekly Reflections & Wins:</strong>
+                    <textarea rows="3" class="auto-save" data-key="week-reflection" placeholder="What went well? What did you learn?"></textarea>
+                </div>
+            </div>
+
+            <!-- Daily Planner -->
+            <div id="daily" class="page" data-bundle="daily">
+                <button class="print-button" onclick="window.print()">🖨️ Print This Page</button>
+                
+                <div class="header-print">
+                    <h2>⏰ Daily Planner</h2>
+                </div>
+
+                <div class="date-field">
+                    <label>Date:</label>
+                    <input type="date" class="auto-save" data-key="daily-date">
+                </div>
+                
+                <div class="priority-box">
+                    <h3>🎯 Most Important Task Today</h3>
+                    <input type="text" class="auto-save" data-key="daily-mit" placeholder="What's the ONE thing that matters most?">
+                </div>
+
+                <div class="practice-menu">
+                    <h3>✨ DAILY PRACTICE MENU</h3>
+                    
+                    <div class="practice-category">
+                        <h4>🏃 Body & Wellness</h4>
+                        <div class="practice-item">
+                            <input type="checkbox" class="auto-save-check" data-key="practice-stretch">
+                            <span>Stretch/Exercise (10 min)</span>
+                        </div>
+                        <div class="practice-item">
+                            <input type="checkbox" class="auto-save-check" data-key="practice-body1">
+                            <input type="text" class="auto-save" data-key="practice-body1-text" placeholder="Add your own...">
+                        </div>
+                    </div>
+
+                    <div class="practice-category">
+                        <h4>🧠 Mind & Growth</h4>
+                        <div class="practice-item">
+                            <input type="checkbox" class="auto-save-check" data-key="practice-read">
+                            <span>Reading (comic/book/article)</span>
+                        </div>
+                        <div class="practice-item">
+                            <input type="checkbox" class="auto-save-check" data-key="practice-mind1">
+                            <input type="text" class="auto-save" data-key="practice-mind1-text" placeholder="Add your own...">
+                        </div>
+                    </div>
+
+                    <div class="practice-category">
+                        <h4>😊 Joy & Recreation</h4>
+                        <div class="practice-item">
+                            <input type="checkbox" class="auto-save-check" data-key="practice-game">
+                            <span>Gaming (COD/other - 1 match)</span>
+                        </div>
+                        <div class="practice-item">
+                            <input type="checkbox" class="auto-save-check" data-key="practice-joy1">
+                            <input type="text" class="auto-save" data-key="practice-joy1-text" placeholder="Add your own...">
+                        </div>
+                    </div>
+
+                    <div class="practice-category" style="margin-bottom: 0;">
+                        <h4>💖 Soul & Spirit</h4>
+                        <div class="practice-item">
+                            <input type="checkbox" class="auto-save-check" data-key="practice-quran">
+                            <span>Qur'an/Dhikr/Dua</span>
+                        </div>
+                        <div class="practice-item">
+                            <input type="checkbox" class="auto-save-check" data-key="practice-soul1">
+                            <input type="text" class="auto-save" data-key="practice-soul1-text" placeholder="Add your own...">
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <h3 style="margin-bottom: 10px;">📋 To-Do List</h3>
+                    <textarea rows="6" class="auto-save" data-key="daily-todo" placeholder="☐ Task 1
+☐ Task 2
+☐ Task 3"></textarea>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <h3>💧 Water Intake (8 glasses)</h3>
+                    <div class="water-tracker" id="waterTracker"></div>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <h3 style="margin-bottom: 10px;">🙏 Daily Gratitude</h3>
+                    <textarea rows="3" class="auto-save" data-key="daily-gratitude" placeholder="What are you grateful for today?"></textarea>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <h3 style="margin-bottom: 10px;">✨ Evening Reflection</h3>
+                    <textarea rows="3" class="auto-save" data-key="daily-reflection" placeholder="How did today go? What did you learn?"></textarea>
+                </div>
+            </div>
+
+            <!-- Habit Tracker -->
+            <div id="habits" class="page" data-bundle="monthly">
+                <button class="print-button" onclick="window.print()">🖨️ Print This Page</button>
+                
+                <div class="header-print">
+                    <h2>💪 Habit Tracker</h2>
+                </div>
+
+                <div class="date-field">
+                    <label>Month:</label>
+                    <input type="text" class="auto-save" data-key="habit-month" placeholder="e.g., January 2025">
+                </div>
+                
+                <p style="margin-bottom: 15px; color: #495057; font-size: 0.95em;">
+                    Track your daily habits. Swipe to see different weeks of the month.
+                </p>
+
+                <div class="habit-week-selector" id="weekSelector"></div>
+                
+                <div class="habit-tracker" id="habitTracker"></div>
+            </div>
+
+            <!-- Study Tracker -->
+            <div id="study" class="page" data-bundle="study">
+                <button class="print-button" onclick="window.print()">🖨️ Print This Page</button>
+                
+                <div class="header-print">
+                    <h2>🧠 Study Tracker</h2>
+                </div>
+
+                <div class="date-field">
+                    <label>Date:</label>
+                    <input type="date" class="auto-save" data-key="study-date">
+                </div>
+                
+                <div class="study-card">
+                    <label>Subject:</label>
+                    <input type="text" class="auto-save" data-key="study-subject" placeholder="e.g., Mathematics, Biology">
+                    
+                    <label>Topic:</label>
+                    <input type="text" class="auto-save" data-key="study-topic" placeholder="e.g., Chapter 5: Algebra">
+                    
+                    <label>Key Points & Summary:</label>
+                    <textarea rows="5" class="auto-save" data-key="study-points" placeholder="Main concepts, formulas..."></textarea>
+                    
+                    <label>Questions / Things to Review:</label>
+                    <textarea rows="3" class="auto-save" data-key="study-questions" placeholder="What do I need to clarify?"></textarea>
+                    
+                    <label>Revision Date:</label>
+                    <input type="date" class="auto-save" data-key="study-revision">
+                </div>
+
+                <div class="study-card">
+                    <label>Additional Notes:</label>
+                    <textarea rows="3" class="auto-save" data-key="study-notes" placeholder="Extra thoughts, resources..."></textarea>
+                </div>
+            </div>
+
+            <!-- Budget Sheet -->
+            <div id="budget" class="page" data-bundle="monthly">
+                <button class="print-button" onclick="window.print()">🖨️ Print This Page</button>
+                
+                <div class="header-print">
+                    <h2>💰 Budget Tracker</h2>
+                </div>
+
+                <div class="date-field">
+                    <label>Period:</label>
+                    <input type="text" class="auto-save" data-key="budget-period" placeholder="e.g., January 2025">
+                </div>
+                
+                <h3 style="margin-top: 15px;">💵 Income</h3>
+                <div class="budget-table">
+                    <table>
+                        <tr>
+                            <th>Source</th>
+                            <th style="width: 100px;">Amount</th>
+                        </tr>
+                        <tr>
+                            <td><input type="text" class="auto-save" data-key="income-1-name" placeholder="Salary"></td>
+                            <td><input type="number" class="auto-save budget-calc" data-key="income-1-amt" placeholder="0.00" step="0.01"></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" class="auto-save" data-key="income-2-name" placeholder="Freelance"></td>
+                            <td><input type="number" class="auto-save budget-calc" data-key="income-2-amt" placeholder="0.00" step="0.01"></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" class="auto-save" data-key="income-3-name" placeholder="Other"></td>
+                            <td><input type="number" class="auto-save budget-calc" data-key="income-3-amt" placeholder="0.00" step="0.01"></td>
+                        </tr>
+                        <tr class="budget-total">
+                            <td><strong>TOTAL</strong></td>
+                            <td><span class="auto-calc" id="totalIncome">0.00</span></td>
+                        </tr>
+                    </table>
+                </div>
+
+                <h3 style="margin-top: 20px;">💳 Expenses</h3>
+                <div class="budget-table">
+                    <table>
+                        <tr>
+                            <th>Category</th>
+                            <th style="width: 100px;">Amount</th>
+                        </tr>
+                        <tr>
+                            <td><input type="text" class="auto-save" data-key="expense-1-name" placeholder="Rent"></td>
+                            <td><input type="number" class="auto-save budget-calc" data-key="expense-1-amt" placeholder="0.00" step="0.01"></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" class="auto-save" data-key="expense-2-name" placeholder="Groceries"></td>
+                            <td><input type="number" class="auto-save budget-calc" data-key="expense-2-amt" placeholder="0.00" step="0.01"></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" class="auto-save" data-key="expense-3-name" placeholder="Transport"></td>
+                            <td><input type="number" class="auto-save budget-calc" data-key="expense-3-amt" placeholder="0.00" step="0.01"></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" class="auto-save" data-key="expense-4-name" placeholder="Utilities"></td>
+                            <td><input type="number" class="auto-save budget-calc" data-key="expense-4-amt" placeholder="0.00" step="0.01"></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" class="auto-save" data-key="expense-5-name" placeholder="Entertainment"></td>
+                            <td><input type="number" class="auto-save budget-calc" data-key="expense-5-amt" placeholder="0.00" step="0.01"></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" class="auto-save" data-key="expense-6-name" placeholder="Other"></td>
+                            <td><input type="number" class="auto-save budget-calc" data-key="expense-6-amt" placeholder="0.00" step="0.01"></td>
+                        </tr>
+                        <tr class="budget-total">
+                            <td><strong>TOTAL</strong></td>
+                            <td><span class="auto-calc" id="totalExpenses">0.00</span></td>
+                        </tr>
+                    </table>
+                </div>
+
+                <h3 style="margin-top: 20px;">💰 Balance</h3>
+                <div class="budget-table">
+                    <table>
+                        <tr class="budget-total">
+                            <td><strong>REMAINING</strong></td>
+                            <td><span class="auto-calc" id="totalBalance" style="font-size: 1.2em;">0.00</span></td>
+                        </tr>
+                    </table>
+                </div>
+
+                <h3 style="margin-top: 20px;">🎯 Savings Goals</h3>
+                <div class="budget-table">
+                    <table>
+                        <tr>
+                            <th>Goal</th>
+                            <th style="width: 80px;">Target</th>
+                            <th style="width: 80px;">Saved</th>
+                            <th style="width: 60px;">%</th>
+                        </tr>
+                        <tr>
+                            <td><input type="text" class="auto-save" data-key="goal-1-name" placeholder="Emergency fund"></td>
+                            <td><input type="number" class="auto-save savings-calc" data-key="goal-1-target" placeholder="0" step="0.01"></td>
+                            <td><input type="number" class="auto-save savings-calc" data-key="goal-1-saved" placeholder="0" step="0.01"></td>
+                            <td><span class="savings-progress" id="goal-1-progress">0%</span></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" class="auto-save" data-key="goal-2-name" placeholder="Hajj savings"></td>
+                            <td><input type="number" class="auto-save savings-calc" data-key="goal-2-target" placeholder="0" step="0.01"></td>
+                            <td><input type="number" class="auto-save savings-calc" data-key="goal-2-saved" placeholder="0" step="0.01"></td>
+                            <td><span class="savings-progress" id="goal-2-progress">0%</span></td>
+                        </tr>
+                        <tr>
+                            <td><input type="text" class="auto-save" data-key="goal-3-name" placeholder="Other goal"></td>
+                            <td><input type="number" class="auto-save savings-calc" data-key="goal-3-target" placeholder="0" step="0.01"></td>
+                            <td><input type="number" class="auto-save savings-calc" data-key="goal-3-saved" placeholder="0" step="0.01"></td>
+                            <td><span class="savings-progress" id="goal-3-progress">0%</span></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Qur'an Reflection -->
+            <div id="quran" class="page" data-bundle="study">
+                <button class="print-button" onclick="window.print()">🖨️ Print This Page</button>
+                
+                <div class="header-print">
+                    <h2>📖 Qur'an Reflection</h2>
+                </div>
+
+                <div class="date-field">
+                    <label>Date:</label>
+                    <input type="date" class="auto-save" data-key="quran-date">
+                </div>
+                
+                <div class="quran-section">
+                    <label><strong>Surah:</strong></label>
+                    <input type="text" class="auto-save" data-key="quran-surah" placeholder="e.g., Al-Baqarah">
+                    
+                    <label style="display: block; margin-top: 12px;"><strong>Ayah(s):</strong></label>
+                    <input type="text" class="auto-save" data-key="quran-ayah" placeholder="e.g., 255">
+                    
+                    <div class="reflection-box">
+                        <h4>📝 Translation & Meaning</h4>
+                        <textarea rows="4" class="auto-save" data-key="quran-meaning" placeholder="What does this verse say?"></textarea>
+                    </div>
+
+                    <div class="reflection-box">
+                        <h4>💭 Personal Reflection</h4>
+                        <textarea rows="4" class="auto-save" data-key="quran-reflection" placeholder="How does this apply to my life?"></textarea>
+                    </div>
+
+                    <div class="reflection-box">
+                        <h4>🎯 Action Steps</h4>
+                        <textarea rows="3" class="auto-save" data-key="quran-action" placeholder="What will I do differently?"></textarea>
+                    </div>
+
+                    <div class="reflection-box">
+                        <h4>🤲 Du'a</h4>
+                        <textarea rows="3" class="auto-save" data-key="quran-dua" placeholder="Prayers related to this verse..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Life Organizer -->
+            <div id="life" class="page" data-bundle="weekly">
+                <button class="print-button" onclick="window.print()">🖨️ Print This Page</button>
+                
+                <div class="header-print">
+                    <h2>🏡 Life Organizer</h2>
+                </div>
+
+                <div class="date-field">
+                    <label>Week of:</label>
+                    <input type="text" class="auto-save" data-key="life-week" placeholder="e.g., Jan 1-7, 2025">
+                </div>
+                
+                <h3 style="margin-top: 15px;">🧹 Weekly Cleaning</h3>
+                <textarea rows="5" class="auto-save" data-key="life-cleaning" placeholder="☐ Kitchen
+☐ Bathroom
+☐ Bedroom
+☐ Living room
+☐ Laundry"></textarea>
+
+                <h3 style="margin-top: 20px;">🍽️ Weekly Meal Plan</h3>
+                <div class="meal-grid">
+                    <div class="meal-box">
+                        <h4>🌅 Breakfast</h4>
+                        <textarea rows="6" class="auto-save" data-key="life-breakfast" placeholder="Mon:
+Tue:
+Wed:
+Thu:
+Fri:
+Sat:
+Sun:"></textarea>
+                    </div>
+                    <div class="meal-box">
+                        <h4>☀️ Lunch</h4>
+                        <textarea rows="6" class="auto-save" data-key="life-lunch" placeholder="Mon:
+Tue:
+Wed:
+Thu:
+Fri:
+Sat:
+Sun:"></textarea>
+                    </div>
+                    <div class="meal-box">
+                        <h4>🌙 Supper</h4>
+                        <textarea rows="6" class="auto-save" data-key="life-supper" placeholder="Mon:
+Tue:
+Wed:
+Thu:
+Fri:
+Sat:
+Sun:"></textarea>
+                    </div>
+                </div>
+
+                <h3 style="margin-top: 20px;">🚗 Errands</h3>
+                <textarea rows="4" class="auto-save" data-key="life-errands" placeholder="☐ Grocery shopping
+☐ Bank
+☐ Post office"></textarea>
+
+                <h3 style="margin-top: 20px;">📞 Calls/Emails</h3>
+                <textarea rows="4" class="auto-save" data-key="life-calls" placeholder="☐ Call/email about...
+☐ Follow up on..."></textarea>
+            </div>
+
+            <!-- Personal Growth -->
+            <div id="growth" class="page" data-bundle="monthly">
+                <button class="print-button" onclick="window.print()">🖨️ Print This Page</button>
+                
+                <div class="header-print">
+                    <h2>🌱 Personal Growth</h2>
+                </div>
+
+                <div class="date-field">
+                    <label>Month:</label>
+                    <input type="text" class="auto-save" data-key="growth-month" placeholder="e.g., January 2025">
+                </div>
+                
+                <h3 style="margin-top: 15px;">🎯 Goals for This Month</h3>
+                <textarea rows="5" class="auto-save" data-key="growth-goals" placeholder="1. Personal goal...
+2. Professional goal...
+3. Spiritual goal..."></textarea>
+
+                <h3 style="margin-top: 20px;">💬 Quote of the Month</h3>
+                <div style="border: 2px solid #000; padding: 20px; border-radius: 10px; background: #f8f9fa; text-align: center; min-height: 100px;">
+                    <textarea rows="3" class="auto-save" data-key="growth-quote" placeholder="A quote that inspires you..." style="text-align: center; font-style: italic; border: none; background: transparent;"></textarea>
+                </div>
+
+                <h3 style="margin-top: 20px;">📚 What I Learned This Week</h3>
+                <textarea rows="4" class="auto-save" data-key="growth-learned" placeholder="New skills, insights, lessons..."></textarea>
+
+                <h3 style="margin-top: 20px;">🌟 Wins & Accomplishments</h3>
+                <textarea rows="3" class="auto-save" data-key="growth-wins" placeholder="Celebrate your achievements!"></textarea>
+
+                <h3 style="margin-top: 20px;">🔄 Areas for Improvement</h3>
+                <textarea rows="3" class="auto-save" data-key="growth-improve" placeholder="What can I work on?"></textarea>
+
+                <h3 style="margin-top: 20px;">✨ Monthly Reflection</h3>
+                <textarea rows="4" class="auto-save" data-key="growth-reflection" placeholder="How am I growing? What patterns do I notice?"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Auto-save functionality
+        let saveTimeout;
+        let currentWeek = 0;
+        
+        function showSaveIndicator() {
+            const indicator = document.getElementById('saveIndicator');
+            indicator.classList.add('show');
+            setTimeout(() => indicator.classList.remove('show'), 2000);
+        }
+
+        function saveData(key, value) {
+            const data = JSON.parse(localStorage.getItem('productivityData') || '{}');
+            data[key] = value;
+            localStorage.setItem('productivityData', JSON.stringify(data));
+            
+            clearTimeout(saveTimeout);
+            saveTimeout = setTimeout(showSaveIndicator, 500);
+        }
+
+        function loadData(key) {
+            const data = JSON.parse(localStorage.getItem('productivityData') || '{}');
+            return data[key] || '';
+        }
+
+        // Load all saved data
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.auto-save').forEach(el => {
+                const key = el.dataset.key;
+                const value = loadData(key);
+                if (value) {
+                    if (el.type === 'checkbox') {
+                        el.checked = value === 'true';
+                    } else {
+                        el.value = value;
+                    }
+                }
+            });
+
+            document.querySelectorAll('.auto-save-check').forEach(el => {
+                const key = el.dataset.key;
+                const value = loadData(key);
+                if (value === 'true') el.checked = true;
+            });
+
+            // Load water tracker
+            for (let i = 0; i < 8; i++) {
+                if (loadData(`water-${i}`) === 'true') {
+                    document.querySelectorAll('.water-glass')[i]?.classList.add('filled');
+                }
+            }
+
+            calculateBudget();
+            calculateSavingsProgress();
+            loadHabitWeek(0);
+        });
+
+        // Auto-save on input
+        document.addEventListener('input', (e) => {
+            if (e.target.classList.contains('auto-save')) {
+                saveData(e.target.dataset.key, e.target.value);
+                
+                if (e.target.classList.contains('budget-calc')) {
+                    calculateBudget();
+                }
+                if (e.target.classList.contains('savings-calc')) {
+                    calculateSavingsProgress();
+                }
+            }
+        });
+
+        document.addEventListener('change', (e) => {
+            if (e.target.classList.contains('auto-save-check')) {
+                saveData(e.target.dataset.key, e.target.checked);
+            }
+            if (e.target.classList.contains('habit-checkbox')) {
+                if (e.target.dataset.key) {
+                    saveData(e.target.dataset.key, e.target.checked);
+                }
+                updateHabitProgress();
+            }
+        });
+
+        // Budget calculations
+        function calculateBudget() {
+            let totalIncome = 0;
+            let totalExpenses = 0;
+
+            for (let i = 1; i <= 3; i++) {
+                const income = parseFloat(loadData(`income-${i}-amt`)) || 0;
+                totalIncome += income;
+            }
+
+            for (let i = 1; i <= 6; i++) {
+                const expense = parseFloat(loadData(`expense-${i}-amt`)) || 0;
+                totalExpenses += expense;
+            }
+
+            const balance = totalIncome - totalExpenses;
+
+            document.getElementById('totalIncome').textContent = totalIncome.toFixed(2);
+            document.getElementById('totalExpenses').textContent = totalExpenses.toFixed(2);
+            document.getElementById('totalBalance').textContent = balance.toFixed(2);
+            
+            const balanceEl = document.getElementById('totalBalance');
+            balanceEl.style.color = balance >= 0 ? '#00b894' : '#d63031';
+        }
+
+        // Savings progress
+        function calculateSavingsProgress() {
+            for (let i = 1; i <= 3; i++) {
+                const target = parseFloat(loadData(`goal-${i}-target`)) || 0;
+                const saved = parseFloat(loadData(`goal-${i}-saved`)) || 0;
+                const progress = target > 0 ? Math.min(100, (saved / target * 100)) : 0;
+                
+                const progressEl = document.getElementById(`goal-${i}-progress`);
+                if (progressEl) {
+                    progressEl.textContent = progress.toFixed(0) + '%';
+                    progressEl.style.color = progress >= 100 ? '#00b894' : '#667eea';
+                }
+            }
+        }
+
+        // Generate calendar days
+        const calendarDays = document.getElementById('calendarDays');
+        for (let i = 0; i < 35; i++) {
+            const dayCell = document.createElement('div');
+            dayCell.className = 'day-cell';
+            dayCell.innerHTML = `<input type="text" class="auto-save" data-key="cal-day-${i}" placeholder="">`;
+            calendarDays.appendChild(dayCell);
+        }
+
+        // Generate water tracker
+        const waterTracker = document.getElementById('waterTracker');
+        for (let i = 0; i < 8; i++) {
+            const glass = document.createElement('div');
+            glass.className = 'water-glass';
+            glass.onclick = function() {
+                this.classList.toggle('filled');
+                saveData(`water-${i}`, this.classList.contains('filled'));
+            };
+            waterTracker.appendChild(glass);
+        }
+
+        // Generate habit tracker with weeks
+        const habitTracker = document.getElementById('habitTracker');
+        const weekSelector = document.getElementById('weekSelector');
+        const habits = [
+            'Fajr on time',
+            'Exercise 30 min',
+            'Read Qur\'an',
+            'Drink 8 glasses',
+            'No phone after 9pm',
+            'Journal/Reflect',
+            'Learn something',
+            'Help someone',
+            'Sleep before 11pm',
+            'Healthy eating'
+        ];
+
+        // Create week selector
+        for (let w = 0; w < 5; w++) {
+            const btn = document.createElement('button');
+            btn.className = 'week-btn' + (w === 0 ? ' active' : '');
+            const start = w * 7 + 1;
+            const end = Math.min(start + 6, 31);
+            btn.textContent = `Week ${w + 1} (${start}-${end})`;
+            btn.onclick = () => loadHabitWeek(w);
+            weekSelector.appendChild(btn);
+        }
+
+        function loadHabitWeek(weekNum) {
+            currentWeek = weekNum;
+            habitTracker.innerHTML = '';
+            
+            // Update active button
+            document.querySelectorAll('.week-btn').forEach((btn, i) => {
+                btn.classList.toggle('active', i === weekNum);
+            });
+            
+            const startDay = weekNum * 7 + 1;
+            const endDay = Math.min(startDay + 6, 31);
+            
+            // Header row
+            const headerRow = document.createElement('div');
+            headerRow.className = 'habit-row';
+            headerRow.innerHTML = '<div class="habit-name" style="font-weight: bold; background: #000; color: white;">HABIT</div>';
+            for (let d = startDay; d <= endDay; d++) {
+                const dayNum = document.createElement('div');
+                dayNum.style.cssText = 'font-size: 0.8em; font-weight: bold; text-align: center;';
+                dayNum.textContent = d;
+                headerRow.appendChild(dayNum);
+            }
+            habitTracker.appendChild(headerRow);
+
+            habits.forEach((habit, habitIndex) => {
+                const row = document.createElement('div');
+                row.className = 'habit-row';
+                
+                const name = document.createElement('div');
+                name.className = 'habit-name';
+                name.textContent = habit;
+                row.appendChild(name);
+
+                for (let d = startDay; d <= endDay; d++) {
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.className = 'habit-checkbox';
+                    checkbox.dataset.key = `habit-${habitIndex}-${d}`;
+                    if (loadData(`habit-${habitIndex}-${d}`) === 'true') {
+                        checkbox.checked = true;
+                    }
+                    row.appendChild(checkbox);
+                }
+
+                const progress = document.createElement('div');
+                progress.className = 'habit-progress';
+                progress.id = `habit-progress-${habitIndex}`;
+                row.appendChild(progress);
+
+                habitTracker.appendChild(row);
+            });
+            
+            updateHabitProgress();
+        }
+
+        function updateHabitProgress() {
+            habits.forEach((habit, habitIndex) => {
+                let checked = 0;
+                for (let d = 1; d <= 31; d++) {
+                    if (loadData(`habit-${habitIndex}-${d}`) === 'true') {
+                        checked++;
+                    }
+                }
+                const percentage = Math.round((checked / 31) * 100);
+                const progressEl = document.getElementById(`habit-progress-${habitIndex}`);
+                if (progressEl) {
+                    progressEl.textContent = percentage + '%';
+                }
+            });
+        }
+
+        // Tab switching
+        function showPage(pageName) {
+            const pages = document.querySelectorAll('.page');
+            const tabs = document.querySelectorAll('.tab');
+            
+            pages.forEach(page => page.classList.remove('active'));
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            document.getElementById(pageName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Eco mode toggle
+        function toggleEcoMode() {
+            document.body.classList.toggle('eco-mode');
+            const isEco = document.body.classList.contains('eco-mode');
+            localStorage.setItem('ecoMode', isEco);
+        }
+
+        // Load eco mode preference
+        if (localStorage.getItem('ecoMode') === 'true') {
+            document.body.classList.add('eco-mode');
+            document.getElementById('ecoMode').checked = true;
+        }
+
+        // Print bundle functionality
+        function printBundle(bundleType) {
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => page.classList.remove('active'));
+
+            if (bundleType === 'all') {
+                pages.forEach(page => page.classList.add('active'));
+            } else {
+                document.querySelectorAll(`[data-bundle="${bundleType}"]`).forEach(page => {
+                    page.classList.add('active');
+                });
+            }
+
+            setTimeout(() => window.print(), 100);
+            
+            setTimeout(() => {
+                pages.forEach(page => page.classList.remove('active'));
+                document.getElementById('monthly').classList.add('active');
+            }, 500);
+        }
+    </script>
+</body>
+</html>
