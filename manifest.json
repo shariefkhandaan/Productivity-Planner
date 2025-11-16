@@ -1,6 +1,6 @@
 {
   "name": "Sharief's Productivity Planner",
-  "short_name": "Planner",
+  "short_name": "SK Planner",
   "description": "Your ultimate productivity and life organizer.",
   "start_url": "/index.html",
   "display": "standalone",
@@ -8,14 +8,14 @@
   "theme_color": "#1e3c72",
   "icons": [
     {
-      "src": "icon.png",
+      "src": "SKPro.jpg",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/jpeg" 
     },
     {
-      "src": "icon.png",
+      "src": "SKPro.jpg",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/jpeg"
     }
   ]
 }
